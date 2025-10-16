@@ -1,10 +1,21 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function TasksPage() {
     const [tasks, setTasks] = useState<{ title: string; description: string }[]>([]);
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
+
+    useEffect(() => {
+        const savedTasks = localStorage.getItem("tasks");
+        if (savedTasks) {
+            setTasks(JSON.parse(savedTasks));
+        }
+    }, []);
+
+    useEffect(() => {
+        localStorage.setItem("tasks", JSON.stringify(tasks));
+    }, [tasks]);
 
     const handleAddTask = (e: React.FormEvent) => {
         e.preventDefault();
