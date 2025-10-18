@@ -20,8 +20,8 @@ export default function Navbar() {
                     </Link>
                 </li>
             </ul>
-            <br />
-            <Link
+            <br/>
+            <Link 
                 href="/tasks"
                 className="ml-auto bg-blue-500 text-white px-3 py-1 rounded"
             >
