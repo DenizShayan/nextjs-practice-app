@@ -1,16 +1,21 @@
 "use client";
 import { useEffect, useState } from "react";
 
+interface Task {
+    title: string;
+    description: string;
+    done: boolean;
+}
+
+
 export default function TasksPage() {
-    const [tasks, setTasks] = useState<{ title: string; description: string }[]>([]);
+    const [tasks, setTasks] = useState<Task[]>([]);
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
 
     useEffect(() => {
         const savedTasks = localStorage.getItem("tasks");
-        if (savedTasks) {
-            setTasks(JSON.parse(savedTasks));
-        }
+        if (savedTasks) setTasks(JSON.parse(savedTasks));
     }, []);
 
     useEffect(() => {
@@ -20,10 +25,21 @@ export default function TasksPage() {
     const handleAddTask = (e: React.FormEvent) => {
         e.preventDefault();
         if (!title.trim()) return;
-        const newTask = { title, description };
+        const newTask: Task = { title, description, done: false };
         setTasks([...tasks, newTask]);
         setTitle("");
         setDescription("");
+    };
+
+    const toggleDone = (index: number) => {
+        const updated = [...tasks];
+        updated[index].done = !updated[index].done;
+        setTasks(updated);
+    };
+
+    const deleteTask = (index: number) => {
+        const updated = tasks.filter((_, i) => i !== index);
+        setTasks(updated);
     };
 
     return (
@@ -55,8 +71,21 @@ export default function TasksPage() {
             <ul>
                 {tasks.map((task, index) => (
                     <li key={index} className="border-b border-gray-200 py-2">
-                        <strong>{task.title}</strong>
-                        <p className="text-gray-600">{task.description}</p>
+                        <div>
+                            <strong
+                                className={`cursor-pointer ${task.done ? "line-through text-gray-500" : ""
+                                    }`}
+                                onClick={() => toggleDone(index)}
+                            >
+                                {task.title}</strong>
+                            <p className="text-gray-600">{task.description}</p>
+                        </div>
+                        <button
+                            onClick={() => deleteTask(index)}
+                            className="text-red-500 hover:text-red-700 ml-4"
+                        >
+                            Delete
+                        </button>
                     </li>
                 ))}
             </ul>
